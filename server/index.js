@@ -16,6 +16,9 @@ const apiRoutes = require("./routes/api");
 
 const app = express();
 
+// Load passport configuration (must be loaded before routes)
+require('./config/passport');
+
 // Middleware
 app.use(
   cors({
