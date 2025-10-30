@@ -16,8 +16,8 @@ const apiRoutes = require("./routes/api");
 
 const app = express();
 
-// Load passport configuration (must be loaded before routes)
-require('./config/passport');
+// Load passport configuration
+require("./config/passport");
 
 // Middleware
 app.use(
@@ -46,40 +46,22 @@ app.use("/api", apiRoutes);
 
 // MongoDB connection
 const MONGO =
-  process.env.MONGO_URI ||
-  "mongodb://127.0.0.1:27017/mern_oauth_unsplash";
-
-// Connect to MongoDB (for serverless, connection is cached)
-let isConnected = false;
+  process.env.MONGO_URI || "mongodb://127.0.0.1:27017/mern_oauth_unsplash";
 
 const connectDB = async () => {
-  if (isConnected) {
-    console.log("Using existing MongoDB connection");
-    return;
-  }
-
   try {
     await mongoose.connect(MONGO, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    isConnected = true;
     console.log("✅ MongoDB connected");
   } catch (err) {
-    console.error("MongoDB connection error:", err.message);
+    console.error("❌ MongoDB connection error:", err.message);
   }
 };
 
 // Connect to DB on startup
 connectDB();
-
-// For local development
-if (process.env.NODE_ENV !== "production") {
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () =>
-    console.log(`🚀 Server running on http://localhost:${PORT}`)
-  );
-}
 
 // Root route
 app.get("/", (req, res) => {
@@ -90,5 +72,8 @@ app.get("/", (req, res) => {
   });
 });
 
-// Export for Vercel serverless
-module.exports = app;
+// ✅ Always listen on a port (Render needs this)
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running and listening on port ${PORT}`);
+});
