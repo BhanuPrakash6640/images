@@ -41,35 +41,51 @@ app.use(passport.session());
 app.use("/auth", authRoutes);
 app.use("/api", apiRoutes);
 
-// MongoDB + Server setup
-const PORT = process.env.PORT || 5000;
+// MongoDB connection
 const MONGO =
   process.env.MONGO_URI ||
   "mongodb://127.0.0.1:27017/mern_oauth_unsplash";
 
-// Mongo connection
-mongoose
-  .connect(MONGO, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
+// Connect to MongoDB (for serverless, connection is cached)
+let isConnected = false;
+
+const connectDB = async () => {
+  if (isConnected) {
+    console.log("Using existing MongoDB connection");
+    return;
+  }
+
+  try {
+    await mongoose.connect(MONGO, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    isConnected = true;
     console.log("✅ MongoDB connected");
-    app.listen(PORT, () =>
-      console.log(`🚀 Server running on http://localhost:${PORT}`)
-    );
-  })
-  .catch((err) => {
+  } catch (err) {
     console.error("MongoDB connection error:", err.message);
-    app.listen(PORT, () =>
-      console.log(`🚀 Server running on ${PORT} (without DB)`)
-    );
-  });
+  }
+};
+
+// Connect to DB on startup
+connectDB();
+
+// For local development
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () =>
+    console.log(`🚀 Server running on http://localhost:${PORT}`)
+  );
+}
 
 // Root route
 app.get("/", (req, res) => {
   res.json({
     message: "Backend running successfully ✅",
     unsplashKey: !!process.env.UNSPLASH_ACCESS_KEY,
+    mongoConnected: mongoose.connection.readyState === 1,
   });
 });
+
+// Export for Vercel serverless
+module.exports = app;

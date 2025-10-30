@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "mern-oauth-unsplash",
   "builds": [
     {
       "src": "server/index.js",
@@ -12,5 +11,8 @@
       "src": "/(.*)",
       "dest": "server/index.js"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
