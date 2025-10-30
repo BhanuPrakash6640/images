@@ -1,0 +1,60 @@
+{
+  "info": {
+    "name": "MERN Image Search API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get me",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{SERVER}}/auth/me"
+        }
+      }
+    },
+    {
+      "name": "Top searches",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{SERVER}}/api/top-searches"
+        }
+      }
+    },
+    {
+      "name": "Search (POST)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"term\": \"cats\" }"
+        },
+        "url": {
+          "raw": "{{SERVER}}/api/search"
+        }
+      }
+    },
+    {
+      "name": "History",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{SERVER}}/api/history"
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "SERVER",
+      "value": "http://localhost:5000"
+    }
+  ]
+}
